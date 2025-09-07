@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>You Can Do It</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffe6f0; /* light pink */
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      color: #ff4081;
+      font-size: 22px;
+    }
+    .container {
+      padding: 15px;
+    }
+    button {
+      padding: 14px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      width: 90%;
+      max-width: 320px;
+    }
+    .login-btn, .register-btn {
+      background-color: #ffb6c1;
+      color: white;
+    }
+    .red-btn {
+      background-color: red;
+      color: white;
+      font-size: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 350px;
+      margin-top: 20px;
+    }
+    .blue-btn {
+      background-color: #2196f3;
+      color: white;
+      font-size: 18px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 320px;
+    }
+    #calendar {
+      margin: 12px auto;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background-color: #fff0f6;
+      pointer-events: none; /* not editable */
+      width: 90%;
+      max-width: 320px;
+      font-size: 16px;
+      text-align: center;
+    }
+    #quoteBox {
+      margin: 15px auto;
+      padding: 12px;
+      width: 90%;
+      max-width: 350px;
+      background: white;
+      border-radius: 10px;
+      color: #333;
+      display: none;
+      font-size: 16px;
+    }
+    #countdown {
+      font-weight: bold;
+      margin-top: 8px;
+      color: #d6336c;
+      font-size: 16px;
+    }
+    input, textarea {
+      padding: 12px;
+      margin: 6px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 90%;
+      max-width: 320px;
+      font-size: 16px;
+    }
+    textarea {
+      height: 80px;
+      resize: none;
+    }
+    #reasonBox {
+      margin: 12px auto;
+      display: none;
+    }
+    #whyData {
+      margin: 15px auto;
+      padding: 12px;
+      width: 90%;
+      max-width: 350px;
+      background: white;
+      border-radius: 10px;
+      display: none;
+      text-align: left;
+      color: #333;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Step 1: Authentication -->
+  <div class="container" id="authContainer">
+    <h1>You Can Do It 🩷</h1>
+    <button class="login-btn" onclick="showLogin()">Login</button>
+    <button class="register-btn" onclick="showRegister()">Register</button>
+    <div id="formArea"></div>
+  </div>
+
+  <!-- Step 2 onwards -->
+  <div class="container" id="mainApp" style="display:none;">
+    <h1>Welcome 💕</h1>
+    <input type="text" id="calendar" readonly>
+    <div id="countdown">Last press: None</div>
+    <div id="quoteBox"></div>
+
+    <!-- Step 5: Reason input -->
+    <div id="reasonBox">
+      <p><b>Is it Necessary?</b></p>
+      <textarea id="reasonInput" placeholder="Write your reason..."></textarea><br>
+      <button onclick="saveReason()">Save Reason</button>
+    </div>
+
+    <button class="red-btn" onclick="showQuote()">NO</button>
+    <br>
+    <button class="blue-btn" onclick="showWhy()">Why</button>
+
+    <div id="whyData"></div>
+  </div>
+
+  <script>
+    // Step 3: Quotes (sequential)
+    let quotes = [
+      "Believe in yourself and all that you are.",
+      "Every day is a second chance.",
+      "Small steps lead to big results.",
+      "Stay strong, the weekend is coming.",
+      "Push yourself, because no one else will.",
+      "Dream it. Wish it. Do it.",
+      "Great things never come from comfort zones.",
+      "Do something today that your future self will thank you for.",
+      "It always seems impossible until it’s done.",
+      "Stay positive, work hard, make it happen.",
+      "Don’t stop until you’re proud.",
+      "Be stronger than your excuses.",
+      "Difficult roads lead to beautiful destinations.",
+      "Hustle until your haters ask if you’re hiring.",
+      "Success doesn’t come to you, you go to it.",
+      "The harder you work for something, the greater you’ll feel when you achieve it.",
+      "Wake up with determination, go to bed with satisfaction.",
+      "Little things make big days.",
+      "Don’t wait for opportunity. Create it.",
+      "Do it now. Sometimes 'later' becomes 'never'.",
+      "Stay hungry. Stay foolish.",
+      "Winners never quit, and quitters never win.",
+      "Act as if what you do makes a difference. It does.",
+      "Hardships often prepare ordinary people for an extraordinary destiny.",
+      "You are stronger than you think.",
+      "Success is not final, failure is not fatal.",
+      "Your only limit is your mind.",
+      "Believe you can and you're halfway there.",
+      "Start where you are. Use what you have. Do what you can.",
+      "Don’t watch the clock; do what it does. Keep going.",
+      "With the new day comes new strength.",
+      "Turn your wounds into wisdom.",
+      "If you want to achieve greatness, stop asking for permission.",
+      "Don’t be pushed around by fears, be led by your dreams.",
+      "Happiness is not by chance, but by choice.",
+      "Doubt kills more dreams than failure ever will.",
+      "It’s going to be hard, but hard does not mean impossible.",
+      "Work hard in silence, let success make the noise.",
+      "Don’t limit your challenges. Challenge your limits.",
+      "Dare to dream, dare to fail.",
+      "A little progress each day adds up to big results.",
+      "Don’t be afraid to start over.",
+      "Stay focused and never give up.",
+      "Pain is temporary, quitting lasts forever.",
+      "Good things take time.",
+      "Every accomplishment starts with the decision to try.",
+      "Your future is created by what you do today, not tomorrow."
+    ];
+    let quoteIndex = 0;
+    let lastPressTime = null;
+    let reasons = JSON.parse(localStorage.getItem("reasons") || "[]");
+
+    // Step 1: Login/Register
+    function showLogin() {
+      document.getElementById("formArea").innerHTML = `
+        <h3>Login</h3>
+        <input id="loginName" placeholder="Name"><br>
+        <input id="loginPass" type="password" placeholder="Password"><br>
+        <button onclick="login()">Enter</button>
+      `;
+    }
+
+    function showRegister() {
+      document.getElementById("formArea").innerHTML = `
+        <h3>Register</h3>
+        <input id="regName" placeholder="Name"><br>
+        <input id="regPass" type="password" placeholder="Password"><br>
+        <button onclick="register()">Save</button>
+      `;
+    }
+
+    function register() {
+      let name = document.getElementById("regName").value;
+      let pass = document.getElementById("regPass").value;
+      if(name && pass){
+        localStorage.setItem("userName", name);
+        localStorage.setItem("userPass", pass);
+        alert("Registered successfully!");
+        showLogin();
+      } else {
+        alert("Please enter both fields!");
+      }
+    }
+
+    function login() {
+      let name = document.getElementById("loginName").value;
+      let pass = document.getElementById("loginPass").value;
+      if(name === localStorage.getItem("userName") && pass === localStorage.getItem("userPass")){
+        document.getElementById("authContainer").style.display="none";
+        document.getElementById("mainApp").style.display="block";
+      } else {
+        alert("Incorrect name or password. Please retry.");
+      }
+    }
+
+    // Step 3 + Step 4: Show quotes & save date
+    function showQuote() {
+      let quoteBox = document.getElementById("quoteBox");
+      quoteBox.style.display = "block";
+      quoteBox.innerText = quotes[quoteIndex];
+      quoteIndex = (quoteIndex + 1) % quotes.length;
+
+      lastPressTime = new Date();
+      let dayName = lastPressTime.toLocaleDateString("en-US", { weekday: 'long' });
+      let todayStr = `${lastPressTime.toLocaleDateString()} (${dayName})`;
+      document.getElementById("calendar").value = todayStr;
+
+      document.getElementById("reasonBox").style.display = "block";
+    }
+
+    // Step 5: Save reason
+    function saveReason() {
+      let reasonText = document.getElementById("reasonInput").value.trim();
+      if(reasonText){
+        let timeStr = new Date().toLocaleString();
+        reasons.push({reason: reasonText, time: timeStr});
+        localStorage.setItem("reasons", JSON.stringify(reasons));
+        alert("Reason saved!");
+        document.getElementById("reasonInput").value = "";
+        document.getElementById("reasonBox").style.display = "none";
+      } else {
+        alert("Please enter a reason!");
+      }
+    }
+
+    // Step 6: Show Why
+    function showWhy() {
+      let box = document.getElementById("whyData");
+      if(reasons.length === 0){
+        box.style.display = "block";
+        box.innerHTML = "<b>No reasons saved yet.</b>";
+      } else {
+        box.style.display = "block";
+        box.innerHTML = "<h3>Reasons History</h3>";
+        reasons.forEach(r => {
+          box.innerHTML += `<p><b>${r.time}</b>: ${r.reason}</p>`;
+        });
+      }
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    // Countdown updater
+    setInterval(() => {
+      if(lastPressTime){
+        let now = new Date();
+        let diffMs = now - lastPressTime;
+        let diffSec = Math.floor(diffMs / 1000);
+        let days = Math.floor(diffSec / 86400);
+        let hours = Math.floor((diffSec % 86400) / 3600);
+        let mins = Math.floor((diffSec % 3600) / 60);
+        let secs = diffSec % 60;
+        document.getElementById("countdown").innerText =
+          `Time since last press: ${days}d ${hours}h ${mins}m ${secs}s`;
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
